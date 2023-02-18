@@ -12,6 +12,10 @@ class Project extends Model
 {
     use HasFactory;
 
+    protected array $dates = [
+        'created_at',
+        'updated_at',
+    ];
     protected $fillable = [
         'name'
     ];
