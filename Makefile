@@ -15,3 +15,6 @@ seed:
 
 test:
 	php artisan test
+
+serve:
+	php artisan serve
