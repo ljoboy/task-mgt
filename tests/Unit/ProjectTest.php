@@ -16,3 +16,27 @@ it('does not create a project without a name field', function () {
     $response = $this->postJson('/api/v1/projects', []);
     $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
 });
+
+it('can fetch a project', function () {
+    $project = Project::factory()->create();
+    $response = $this->getJson(route('api.v1.projects.show', $project->id));
+    $data = [
+        'success' => true,
+        'message' => 'Data retrieved successfully',
+        'data' => [
+            'id' => $project->id,
+            'name' => $project->name,
+            'created_at' => $project->created_at,
+            'updated_at' => $project->updated_at,
+        ]
+    ];
+
+    $response->assertStatus(Response::HTTP_OK)->assertJson($data);
+});
+
+it('can not fetch a project with wrong id', function () {
+    $project = Project::factory()->create();
+    $wrongId = $project->id + 1;
+    $response = $this->getJson(route('api.v1.projects.show', $wrongId));
+    $response->assertStatus(Response::HTTP_NOT_FOUND);
+});
