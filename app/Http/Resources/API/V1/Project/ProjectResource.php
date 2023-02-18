@@ -18,7 +18,7 @@ class ProjectResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'created_at' => $this->created_at,
-            'update_at' => $this->update_at
+            'updated_at' => $this->update_at,
         ];
     }
 }
