@@ -5,7 +5,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 it('can create a project', function () {
     $project = Project::factory()->raw();
-    $response = $this->postJson(route('api.v1.projects.index'), $project);
+    $response = $this->postJson(route('api.v1.projects.store'), $project);
     $response->assertStatus(Response::HTTP_CREATED)
         ->assertJson(['message' => 'Project has been created'])
         ->assertJson(['success' => true]);
@@ -13,7 +13,7 @@ it('can create a project', function () {
 });
 
 it('does not create a project without a name field', function () {
-    $response = $this->postJson(route('api.v1.projects.index'), []);
+    $response = $this->postJson(route('api.v1.projects.store'), []);
     $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
 });
 
