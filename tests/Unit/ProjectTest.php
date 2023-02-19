@@ -23,12 +23,7 @@ it('can fetch a project', function () {
     $data = [
         'success' => true,
         'message' => 'Data retrieved successfully',
-        'data' => [
-            'id' => $project->id,
-            'name' => $project->name,
-            'created_at' => $project->created_at,
-            'updated_at' => $project->updated_at,
-        ]
+        'data' => $project->toArray(),
     ];
 
     $response->assertStatus(Response::HTTP_OK)->assertJson($data);
