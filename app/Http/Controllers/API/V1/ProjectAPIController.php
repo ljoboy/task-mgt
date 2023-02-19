@@ -7,6 +7,7 @@ namespace App\Http\Controllers\API\V1;
 use App\Http\Controllers\API\APIController;
 use App\Http\Requests\API\V1\Project\ProjectStoreRequest;
 use App\Http\Requests\API\V1\Project\ProjectUpdateRequest;
+use App\Http\Resources\API\V1\Project\ProjectCollection;
 use App\Http\Resources\API\V1\Project\ProjectResource;
 use App\Models\Project;
 use Illuminate\Http\JsonResponse;
@@ -17,9 +18,12 @@ class ProjectAPIController extends APIController
     /**
      * Display a listing of the resource.
      */
-    public function index(): JsonResponse
+    public function index(): mixed
     {
-        //
+        $projects = Project::query()
+            ->paginate(25);
+
+        return ProjectCollection::make($projects)->response()->getData();
     }
 
     /**
