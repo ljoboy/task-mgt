@@ -59,3 +59,17 @@ it('cannot update project without name field', function () {
     $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
 });
 
+it('can delete a project', function () {
+    $project = Project::factory()->create();
+    $response = $this->deleteJson(route('api.v1.projects.destroy', $project->id));
+    $response->assertStatus(Response::HTTP_NO_CONTENT);
+    $this->assertCount(0, Project::all());
+});
+
+it('cannot delete a project with a wrong id', function () {
+    $project = Project::factory()->create();
+    $wrongId = $project->id + 1;
+    $response = $this->deleteJson(route('api.v1.projects.destroy', $wrongId));
+    $response->assertStatus(Response::HTTP_NOT_FOUND);
+    $this->assertDatabaseHas('projects', $project->toArray());
+});

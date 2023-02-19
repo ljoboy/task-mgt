@@ -56,7 +56,8 @@ class ProjectAPIController extends APIController
             $this->responseSuccess(
                 new ProjectResource($project),
                 'Project updated successfully!',
-                Response::HTTP_ACCEPTED)
+                Response::HTTP_ACCEPTED
+            )
             :
             $this->responseError('A problem occurred! Please try again!');
     }
@@ -66,6 +67,15 @@ class ProjectAPIController extends APIController
      */
     public function destroy(Project $project): JsonResponse
     {
-        //
+        $deleted = $project->delete();
+        return $deleted
+            ?
+            $this->responseSuccess(
+                null,
+                'Project deleted successfully!',
+                Response::HTTP_NO_CONTENT
+            )
+            :
+            $this->responseError('A problem occurred! Please try again!');
     }
 }

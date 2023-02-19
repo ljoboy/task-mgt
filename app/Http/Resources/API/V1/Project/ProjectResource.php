@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Resources\API\V1\Project;
 
 use Illuminate\Http\Request;
@@ -19,6 +21,8 @@ class ProjectResource extends JsonResource
             'name' => $this->name,
             'created_at' => $this->created_at->format('Y-m-d H:i:s'),
             'updated_at' => $this->updated_at->format('Y-m-d H:i:s'),
+//            'tasks' => new TaskResource($this->whenLoaded('tasks'))
+
         ];
     }
 }
