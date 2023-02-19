@@ -22,5 +22,6 @@ Route::prefix('v1')->as('api.v1.')->group(function () {
         ->group(function () {
         Route::post('/', 'store')->name('store');
         Route::get('{project}', 'show')->name('show');
+        Route::put('{project}', 'update')->name('update');
     });
 });

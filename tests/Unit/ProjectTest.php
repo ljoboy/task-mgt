@@ -35,3 +35,27 @@ it('can not fetch a project with wrong id', function () {
     $response = $this->getJson(route('api.v1.projects.show', $wrongId));
     $response->assertStatus(Response::HTTP_NOT_FOUND);
 });
+
+it('can update a project', function () {
+    $project = Project::factory()->create();
+    $updated = ['name' => 'Updated Name'];
+    $response = $this->putJson(route('api.v1.projects.update', $project->id), $updated);
+    $response->assertStatus(Response::HTTP_ACCEPTED)->assertJson(['message' => 'Project updated successfully!']);
+    $this->assertDatabaseHas('projects', $updated);
+});
+
+it('cannot update project with a wrong id', function () {
+    $project = Project::factory()->create();
+    $updated = ['name' => 'Updated Name'];
+    $wrongId = $project->id + 1;
+    $response = $this->putJson(route('api.v1.projects.update', $wrongId), $updated);
+    $response->assertStatus(Response::HTTP_NOT_FOUND);
+});
+
+it('cannot update project without name field', function () {
+    $project = Project::factory()->create();
+    $updated = [];
+    $response = $this->putJson(route('api.v1.projects.update', $project->id), $updated);
+    $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
+});
+

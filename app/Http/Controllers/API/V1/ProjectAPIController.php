@@ -1,13 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\API\V1;
 
 use App\Http\Controllers\API\APIController;
 use App\Http\Requests\API\V1\Project\ProjectStoreRequest;
+use App\Http\Requests\API\V1\Project\ProjectUpdateRequest;
 use App\Http\Resources\API\V1\Project\ProjectResource;
 use App\Models\Project;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class ProjectAPIController extends APIController
@@ -45,9 +47,18 @@ class ProjectAPIController extends APIController
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Project $project): JsonResponse
+    public function update(ProjectUpdateRequest $request, Project $project): JsonResponse
     {
-        //
+        $new_project = $project->update($request->validated());
+
+        return $new_project
+            ?
+            $this->responseSuccess(
+                new ProjectResource($project),
+                'Project updated successfully!',
+                Response::HTTP_ACCEPTED)
+            :
+            $this->responseError('A problem occurred! Please try again!');
     }
 
     /**
