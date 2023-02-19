@@ -21,5 +21,6 @@ Route::prefix('v1')->as('api.v1.')->group(function () {
         ->controller(ProjectAPIController::class)
         ->group(function () {
         Route::post('/', 'store')->name('store');
+        Route::get('{project}', 'show')->name('show');
     });
 });
