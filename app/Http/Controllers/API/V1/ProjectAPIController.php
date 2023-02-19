@@ -39,7 +39,7 @@ class ProjectAPIController extends APIController
      */
     public function show(Project $project): JsonResponse
     {
-        //
+        return $this->responseSuccess(new ProjectResource($project));
     }
 
     /**
