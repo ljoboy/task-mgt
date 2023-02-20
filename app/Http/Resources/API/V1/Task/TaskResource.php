@@ -2,13 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Resources\API\V1\Project;
+namespace App\Http\Resources\API\V1\Task;
 
-use App\Http\Resources\API\V1\Task\TaskResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class ProjectResource extends JsonResource
+class TaskResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -20,10 +19,9 @@ class ProjectResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
+            'priority' => $this->priority,
             'created_at' => $this->created_at->diffForHumans(),
             'updated_at' => $this->updated_at->diffForHumans(),
-            'tasks' => TaskResource::make($this->whenLoaded('tasks'))
-
         ];
     }
 }

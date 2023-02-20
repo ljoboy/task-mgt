@@ -1,5 +1,8 @@
 <?php
 
+declare(strict_types=1);
+
+use App\Http\Resources\API\V1\Project\ProjectResource;
 use App\Models\Project;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -23,7 +26,7 @@ it('can fetch a project', function () {
     $data = [
         'success' => true,
         'message' => 'Data retrieved successfully',
-        'data' => $project->toArray(),
+        'data' => (new ProjectResource($project))->jsonSerialize(),
     ];
 
     $response->assertStatus(Response::HTTP_OK)->assertJson($data);

@@ -22,7 +22,6 @@ class Project extends Model
         'updated_at' => 'datetime',
     ];
 
-    protected $with = ['tasks'];
     public function tasks(): HasMany
     {
         return $this->hasMany(Task::class);

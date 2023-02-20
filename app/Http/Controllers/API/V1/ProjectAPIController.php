@@ -72,6 +72,7 @@ class ProjectAPIController extends APIController
     public function destroy(Project $project): JsonResponse
     {
         $deleted = $project->delete();
+
         return $deleted
             ?
             $this->responseSuccess(
