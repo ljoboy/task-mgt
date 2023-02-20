@@ -8,6 +8,7 @@ use App\Http\Controllers\API\APIController;
 use App\Http\Requests\API\V1\Task\StoreTaskRequest;
 use App\Http\Requests\API\V1\Task\UpdateTaskRequest;
 use App\Http\Resources\API\V1\Project\ProjectResource;
+use App\Http\Resources\API\V1\Task\TaskCollection;
 use App\Http\Resources\API\V1\Task\TaskResource;
 use App\Models\Project;
 use App\Models\Task;
@@ -19,9 +20,11 @@ class TaskAPIController extends APIController
     /**
      * Display a listing of the resource.
      */
-    public function index(): JsonResponse
+    public function index(Project $project): mixed
     {
-        //
+        $tasks = $project->tasks()->paginate(25);
+
+        return TaskCollection::make($tasks)->response()->getData();
     }
 
     /**

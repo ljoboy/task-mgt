@@ -20,8 +20,7 @@ class ProjectAPIController extends APIController
      */
     public function index(): mixed
     {
-        $projects = Project::query()
-            ->paginate(25);
+        $projects = Project::query()->paginate(25);
 
         return ProjectCollection::make($projects)->response()->getData();
     }
