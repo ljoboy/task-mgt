@@ -2,7 +2,6 @@
 
 use App\Http\Controllers\API\V1\ProjectAPIController;
 use App\Http\Controllers\API\V1\TaskAPIController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -17,6 +16,8 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::prefix('v1')->as('api.v1.')->group(function () {
+    Route::post('projects/{project}/tasks/reorder', [TaskAPIController::class, 'reorder'])->name('projects.tasks.reorder');
+    Route::get('tasks', [TaskAPIController::class, 'index'])->name('tasks.all');
     Route::apiResource('projects', ProjectAPIController::class);
     Route::apiResource('projects.tasks', TaskAPIController::class);
 });

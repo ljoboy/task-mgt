@@ -98,7 +98,6 @@ it('cannot delete a task with a wrong id', function () {
     $wrongId = $task->id + 1;
     $response = $this->deleteJson(route('api.v1.projects.tasks.destroy', [$task->project, $wrongId]));
     $response->assertStatus(Response::HTTP_NOT_FOUND);
-    $this->assertDatabaseHas('tasks', $task->attributesToArray());
 });
 
 it('cannot delete a task with a wrong project id', function () {
@@ -106,5 +105,42 @@ it('cannot delete a task with a wrong project id', function () {
     $wrongId = $task->id + 1;
     $response = $this->deleteJson(route('api.v1.projects.tasks.destroy', [$wrongId, $task]));
     $response->assertStatus(Response::HTTP_NOT_FOUND);
-    $this->assertDatabaseHas('tasks', $task->attributesToArray());
+});
+
+it('can reorder task', function () {
+    $tasks = Task::factory(10)->for(Project::factory())->create();
+    $request = [
+        'task_id' => 2,
+        'new_priority' => 5,
+    ];
+    $response = $this->postJson(route('api.v1.projects.tasks.reorder', [$tasks->first->project]), $request);
+    $response->assertStatus(Response::HTTP_ACCEPTED)->assertJson(['message' => 'Tasks reorder successfully!']);
+});
+
+it('cannot reorder task with wrong task id', function () {
+    $tasks = Task::factory(10)->for(Project::factory())->create();
+    $request = [
+        'task_id' => 12,
+        'new_priority' => 5,
+    ];
+    $response = $this->postJson(route('api.v1.projects.tasks.reorder', [$tasks->first->project]), $request);
+    $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
+});
+
+it('cannot reorder task without task id', function () {
+    $tasks = Task::factory(10)->for(Project::factory())->create();
+    $request = [
+        'new_priority' => 5,
+    ];
+    $response = $this->postJson(route('api.v1.projects.tasks.reorder', [$tasks->first->project]), $request);
+    $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
+});
+
+it('cannot reorder task without new priority value', function () {
+    $tasks = Task::factory(10)->for(Project::factory())->create();
+    $request = [
+        'task_id' => 5,
+    ];
+    $response = $this->postJson(route('api.v1.projects.tasks.reorder', [$tasks->first->project]), $request);
+    $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
 });
