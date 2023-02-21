@@ -44,7 +44,7 @@ class ProjectAPIController extends APIController
      */
     public function show(Project $project): JsonResponse
     {
-        return $this->responseSuccess(new ProjectResource($project));
+        return $this->responseSuccess(new ProjectResource($project->load(['tasks'])));
     }
 
     /**

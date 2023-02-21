@@ -22,7 +22,7 @@ class ProjectResource extends JsonResource
             'name' => $this->name,
             'created_at' => $this->created_at->diffForHumans(),
             'updated_at' => $this->updated_at->diffForHumans(),
-            'tasks' => TaskResource::make($this->whenLoaded('tasks'))
+            'tasks' => TaskResource::collection($this->whenLoaded('tasks'))
 
         ];
     }
