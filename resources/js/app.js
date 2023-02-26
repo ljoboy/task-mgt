@@ -1,7 +1,10 @@
-import './bootstrap';
+import { createApp } from "vue";
+import App from "./App.vue";
+import router from "./router";
+import "../assets/tailus.css";
 
-import {createApp} from 'vue'
+const app = createApp(App);
 
-import App from './App.vue'
+app.use(router);
 
-createApp(App).mount("#app")
+app.mount("#app");
