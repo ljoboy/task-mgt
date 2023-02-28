@@ -1,4 +1,4 @@
-<script>
+<script setup lang="ts">
     import { store } from '@/store'
     export default {
         data(){
