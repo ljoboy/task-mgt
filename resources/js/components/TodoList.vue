@@ -2,9 +2,9 @@
 
 import {onMounted} from "vue";
 import {useTaskListStore} from "../stores/useTaskListStore";
+import {useProjectListStore} from "../stores/useProjectListStore";
 import TodoItem from "./TodoItem.vue";
 import ProjectFilter from "./ProjectFilter.vue";
-import {useProjectListStore} from "../stores/useProjectListStore";
 import NewTodoItem from "./NewTodoItem.vue";
 
 const store = useTaskListStore();
@@ -34,7 +34,7 @@ onMounted(() => {
                     {{ store.tasks.length }}
                 </span>
                 <span>
-                    {{ projectStore.selectedProject.name }}'s Task<span v-if="store.tasks.length > 1">s</span>
+                    {{ projectStore.selectedProject.name }} Task<span v-if="store.tasks.length > 1">s</span>
                 </span>
             </h1>
             <button v-if="projectStore.selectedProject.id !== 0" @click="store.isActive = !store.isActive"
@@ -50,6 +50,7 @@ onMounted(() => {
         <todo-item
             v-for="task in store.tasks"
             :key="task.id"
+            :id="task.id"
             :name="task.name"
             :priority="task.priority"
             :created_at="task.created_at"

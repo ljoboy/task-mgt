@@ -39,10 +39,18 @@ export const useTaskListStore = defineStore("taskList", {
                 console.log(e.message)
             }
         },
-        deleteTask(itemID: Number) {
-            this.taskList = this.taskList.filter((object) => {
-                return object.id !== itemID;
-            });
+        async deleteTask(projectID: Number, itemID: Number) {
+            try {
+                const response = await tasksApi.deleteTask(projectID, itemID);
+                if (response.status  === 204) {
+                    this.tasks = this.tasks.filter((object) => {
+                        return object.id !== itemID;
+                    });
+                    console.log("deleted")
+                }
+            } catch (e) {
+                console.log(e.message)
+            }
         },
         reorder(idToFind: Number) {
             const Task = this.taskList.find((obj) => obj.id === idToFind);

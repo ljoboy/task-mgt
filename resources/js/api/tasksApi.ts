@@ -14,8 +14,8 @@ export default {
     updateTask(task) {
         return axios.put(base_path + '/' + task.id, {text: task.text});
     },
-    deleteTask(task) {
-        return axios.delete(base_path + '/' + task.id);
+    deleteTask(projectID: Number, itemID: Number) {
+        return axios.delete(`${base_path}/projects/${projectID}/tasks/${itemID}`);
     },
     reorderTask(taskId) {
         return axios.post(base_path + '/reorder');
