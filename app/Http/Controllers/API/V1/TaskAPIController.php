@@ -60,7 +60,7 @@ class TaskAPIController extends APIController
         return $new_task
             ?
             $this->responseSuccess(
-                data: new TaskResource($project),
+                data: new TaskResource($task),
                 message: 'Task updated successfully!',
                 code: Response::HTTP_ACCEPTED
             )
