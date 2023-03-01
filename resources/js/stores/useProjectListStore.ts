@@ -31,7 +31,7 @@ export const useProjectListStore = defineStore("projectList", {
         addProject(item: string) {
             return this.projectList.push({item, id: this.id++});
         },
-        deleteProject(itemID: number) {
+        deleteProject(itemID: Number) {
             return this.projectList = this.projectList.filter((object) => {
                 return object.id !== itemID;
             });

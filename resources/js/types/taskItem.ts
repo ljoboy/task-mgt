@@ -1,8 +1,8 @@
 export interface TaskItem {
     created_at: string;
-    id: number;
+    id: Number;
     name: string;
-    priority: number;
-    project_id: number;
+    priority: Number;
+    project_id: Number;
     updated_at: string;
 }

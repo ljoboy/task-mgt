@@ -1,6 +1,6 @@
 export interface ProjectItem {
     created_at: string;
-    id: number;
+    id: Number;
     name: string;
     updated_at: string;
 }
