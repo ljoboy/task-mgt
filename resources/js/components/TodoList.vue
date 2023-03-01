@@ -1,11 +1,11 @@
 <script setup lang="ts">
+
 import {onMounted} from "vue";
 import {useTaskListStore} from "../stores/useTaskListStore";
 import TodoItem from "./TodoItem.vue";
-import NewTodoItem from "../views/NewTodoItem.vue";
 import ProjectFilter from "./ProjectFilter.vue";
 import {useProjectListStore} from "../stores/useProjectListStore";
-import {ProjectItem} from "../types/projectItem";
+import NewTodoItem from "./NewTodoItem.vue";
 
 const store = useTaskListStore();
 const projectStore = useProjectListStore();
@@ -37,7 +37,7 @@ onMounted(() => {
                     {{ projectStore.selectedProject.name }}'s Task<span v-if="store.tasks.length > 1">s</span>
                 </span>
             </h1>
-            <button @click="store.isActive = !store.isActive"
+            <button v-if="projectStore.selectedProject.id !== 0" @click="store.isActive = !store.isActive"
                     class="p-2 rounded-xl transition duration-300 hover:bg-gray-300/40 focus:bg-gray-300/40 active:bg-gray-300/60">
                 <span class="sr-only">Add new task</span>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
