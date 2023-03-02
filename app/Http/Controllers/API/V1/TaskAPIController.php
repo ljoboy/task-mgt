@@ -86,34 +86,21 @@ class TaskAPIController extends APIController
             $this->responseError('A problem occurred! Please try again!');
     }
 
-    public function reorder(ReorderRequest $request, Project $project)
+    public function reorder(ReorderRequest $request, Project $project, Task $task)
     {
-        $task_id = $request->get('task_id');
-        $requested_task = Task::find($task_id)->first();
         $new_priority = $request->get('new_priority');
-        $old_priority = $requested_task->priority;
-        $priorities = collect()
-            ->range($old_priority, $new_priority)
-            ->sort()
-            ->values()
-            ->all();
 
-        $tasks = $project->tasks->whereBetween('priority', $priorities);
-
-        foreach ($tasks as $task) {
-            if ($task->id === $requested_task->id) {
-                $task->update(['priority' => $new_priority]);
-            } elseif ($new_priority > $old_priority) {
-                $task->increment('priority');
-            } else {
-                $task->decrement('priority');
-            }
-        }
+        $task->reorder($new_priority);
 
         return $this->responseSuccess(
             data: TaskCollection::make($project->tasks()->orderBy('priority')->paginate(100)),
             message: 'Tasks reorder successfully!',
             code: Response::HTTP_ACCEPTED
         );
+    }
+
+    private function taskProjectValidation(Project $project, Task $task)
+    {
+        $task->whereProjectId($project->id)->exists();
     }
 }

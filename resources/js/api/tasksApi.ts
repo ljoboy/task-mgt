@@ -1,4 +1,5 @@
 import axios from "axios";
+import {TaskItem} from "../types/taskItem";
 
 const base_path = '/api/v1';
 export default {
@@ -11,8 +12,8 @@ export default {
     createTask(projectID: Number, name: String) {
         return axios.post(`${base_path}/projects/${projectID}/tasks`, {name});
     },
-    updateTask(task) {
-        return axios.put(base_path + '/' + task.id, {text: task.text});
+    updateTask(projectID: Number, task: TaskItem, name: String) {
+        return axios.patch(`${base_path}/projects/${projectID}/tasks/${task.id}`, {name});
     },
     deleteTask(projectID: Number, itemID: Number) {
         return axios.delete(`${base_path}/projects/${projectID}/tasks/${itemID}`);

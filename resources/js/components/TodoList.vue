@@ -1,14 +1,16 @@
 <script setup lang="ts">
 
-import {onMounted} from "vue";
+import {nextTick, onMounted, ref} from "vue";
 import {useTaskListStore} from "../stores/useTaskListStore";
 import {useProjectListStore} from "../stores/useProjectListStore";
 import TodoItem from "./TodoItem.vue";
 import ProjectFilter from "./ProjectFilter.vue";
-import NewTodoItem from "./NewTodoItem.vue";
+import {TaskItem} from "../types/taskItem";
+import TodoForm from "./TodoForm.vue";
 
 const store = useTaskListStore();
 const projectStore = useProjectListStore();
+const taskEmitted = ref<TaskItem>();
 
 const getProjectTasks = () => {
     if (projectStore.selectedProject.id != 0) {
@@ -17,6 +19,24 @@ const getProjectTasks = () => {
         store.fetchTasks();
     }
 
+}
+
+const getEmittedTask = (task: TaskItem) => {
+    taskEmitted.value = task;
+}
+
+const formActivation = () => {
+    store.isActive = !store.isActive;
+    taskEmitted.value = null;
+}
+
+const todoRef = ref(null);
+async function scrollToForm() {
+    const target = todoRef.value;
+    if (target) {
+        await nextTick();
+        target.$el.scrollIntoView({behavior: "smooth", block: "center", inline: "center"});
+    }
 }
 
 onMounted(() => {
@@ -37,7 +57,7 @@ onMounted(() => {
                     {{ projectStore.selectedProject.name }} Task<span v-if="store.tasks.length > 1">s</span>
                 </span>
             </h1>
-            <button v-if="projectStore.selectedProject.id !== 0" @click="store.isActive = !store.isActive"
+            <button v-if="projectStore.selectedProject.id !== 0" @click="formActivation()"
                     class="p-2 rounded-xl transition duration-300 hover:bg-gray-300/40 focus:bg-gray-300/40 active:bg-gray-300/60">
                 <span class="sr-only">Add new task</span>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
@@ -46,14 +66,16 @@ onMounted(() => {
                 </svg>
             </button>
         </div>
-        <new-todo-item/>
+        <todo-form
+            :task="taskEmitted"
+            ref="todoRef"
+        />
         <todo-item
             v-for="task in store.tasks"
             :key="task.id"
-            :id="task.id"
-            :name="task.name"
-            :priority="task.priority"
-            :created_at="task.created_at"
+            :task="task"
+            @emitted-task="getEmittedTask"
+            @click="scrollToForm"
         />
     </div>
 </template>

@@ -110,37 +110,44 @@ it('cannot delete a task with a wrong project id', function () {
 it('can reorder task', function () {
     $tasks = Task::factory(10)->for(Project::factory())->create();
     $request = [
-        'task_id' => 2,
         'new_priority' => 5,
     ];
-    $response = $this->postJson(route('api.v1.projects.tasks.reorder', [$tasks->first->project]), $request);
+    $response = $this->postJson(route('api.v1.projects.tasks.reorder', [$tasks->first->project, $tasks->random()]), $request);
     $response->assertStatus(Response::HTTP_ACCEPTED)->assertJson(['message' => 'Tasks reorder successfully!']);
 });
 
 it('cannot reorder task with wrong task id', function () {
     $tasks = Task::factory(10)->for(Project::factory())->create();
+    $wrongId = 57;
     $request = [
-        'task_id' => 12,
         'new_priority' => 5,
     ];
-    $response = $this->postJson(route('api.v1.projects.tasks.reorder', [$tasks->first->project]), $request);
-    $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
+    $response = $this->postJson(route('api.v1.projects.tasks.reorder', [$tasks->first->project, $wrongId]), $request);
+    $response->assertStatus(Response::HTTP_NOT_FOUND);
 });
 
-it('cannot reorder task without task id', function () {
+it('cannot reorder task with wrong project id', function () {
     $tasks = Task::factory(10)->for(Project::factory())->create();
+    $wrongId = 57;
     $request = [
         'new_priority' => 5,
     ];
-    $response = $this->postJson(route('api.v1.projects.tasks.reorder', [$tasks->first->project]), $request);
+    $response = $this->postJson(route('api.v1.projects.tasks.reorder', [$wrongId, $tasks->random()]), $request);
+    $response->assertStatus(Response::HTTP_NOT_FOUND);
+});
+
+it('cannot reorder task with wrong project id for task', function () {
+    $tasks = Task::factory(10)->for(Project::factory())->create();
+    $project = Project::factory()->create();
+    $request = [
+        'new_priority' => 5,
+    ];
+    $response = $this->postJson(route('api.v1.projects.tasks.reorder', [$project, $tasks->random()]), $request);
     $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
 });
 
 it('cannot reorder task without new priority value', function () {
     $tasks = Task::factory(10)->for(Project::factory())->create();
-    $request = [
-        'task_id' => 5,
-    ];
-    $response = $this->postJson(route('api.v1.projects.tasks.reorder', [$tasks->first->project]), $request);
+    $response = $this->postJson(route('api.v1.projects.tasks.reorder', [$tasks->first->project]), []);
     $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
 });

@@ -24,7 +24,7 @@ onMounted(() => {
 <template>
     <h1 class="text-lg font-bold text-gray-800 flex items-center gap-2">
         <span>
-            Projects
+            Project<span v-if="store.projects.length > 1">s</span>
         </span>
         <span
             class="w-6 h-6 flex items-center justify-center rounded-xl text-sm font-semibold  bg-primary/10 text-cyan-900">

@@ -23,10 +23,6 @@ class ReorderRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'task_id' => [
-                'required',
-                'exists:tasks,id',
-            ],
             'new_priority' => [
                 'required',
                 'integer',

@@ -6,6 +6,7 @@ export const useTaskListStore = defineStore("taskList", {
     state: () => ({
         tasks: [] as TaskItem[],
         id: 0,
+        isActive: false,
     }),
     getters: {
         getTasks(state) {
@@ -32,7 +33,7 @@ export const useTaskListStore = defineStore("taskList", {
         async addTask(projectID: Number, task: String) {
             try {
                 const response = await tasksApi.createTask(projectID, task);
-                if (response.status  === 201) {
+                if (response.status === 201) {
                     this.tasks.push(response.data.data)
                 }
             } catch (e) {
@@ -42,11 +43,27 @@ export const useTaskListStore = defineStore("taskList", {
         async deleteTask(projectID: Number, itemID: Number) {
             try {
                 const response = await tasksApi.deleteTask(projectID, itemID);
-                if (response.status  === 204) {
-                    this.tasks = this.tasks.filter((object) => {
+                if (response.status === 204) {
+                    this.tasks = this.tasks.filter((object: TaskItem) => {
                         return object.id !== itemID;
                     });
                     console.log("deleted")
+                }
+            } catch (e) {
+                console.log(e.message)
+            }
+        },
+        async editTask(projectID: Number, task: TaskItem, name: String) {
+            try {
+                const response = await tasksApi.updateTask(projectID, task, name);
+                if (response.status === 202) {
+                    const returnedTask = response.data.data;
+                    this.tasks = this.tasks.map((task: TaskItem) => {
+                        if (task.id === returnedTask.id) {
+                            return task = returnedTask;
+                        }
+                        return task;
+                    });
                 }
             } catch (e) {
                 console.log(e.message)

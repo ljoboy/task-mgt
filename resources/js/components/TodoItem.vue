@@ -1,36 +1,28 @@
 <script setup lang="ts">
 import {useTaskListStore} from '../stores/useTaskListStore'
 import {useProjectListStore} from "../stores/useProjectListStore";
+import {PropType} from "vue";
+import {TaskItem} from "../types/taskItem";
 
-const props = defineProps({
-    id: {
-        type: Number,
-        required: true,
-    },
-    name: {
-        type: String,
-        required: true,
-        default: "Task name",
-    },
-    priority: {
-        type: Number,
-        required: true,
-    },
-    created_at: {
-        type: String,
-        required: true,
-        default: "",
-    },
-});
 const store = useTaskListStore();
 const projectStore = useProjectListStore();
+const props = defineProps({
+    task: {
+        type: Object as PropType<TaskItem>,
+        required: true,
+    }
+});
 
-const editTask = () => {
-    //store.editTask(projectStore.selectedProject.id, this.id)
-};
 const deleteTask = () => {
-    store.deleteTask(projectStore.selectedProject.id, props.id)
+    store.deleteTask(projectStore.selectedProject.id, props.task.id)
 };
+
+const emit = defineEmits(['emittedTask']);
+
+function taskToEmit() {
+    emit('emittedTask', props.task);
+    store.isActive = !store.isActive;
+}
 </script>
 
 <template>
@@ -43,9 +35,10 @@ const deleteTask = () => {
         </svg>
         <div class="w-[calc(100%-3.75rem)] overflow-hidden">
             <h2 class="w-max font-semibold text-gray-600">
-                {{ name }}
+                {{ task.name }}
             </h2>
-            <span class="text-xs text-cyan-500 self-end place-content-end ">{{ created_at }}</span>
+            <span class="text-xs text-cyan-500 float-left">created {{ task.created_at }}</span>
+            <span class="text-xs text-cyan-500 float-right"> updated {{ task.updated_at }}</span>
         </div>
         <div
             v-if="projectStore.selectedProject.id !== 0"
@@ -53,7 +46,7 @@ const deleteTask = () => {
         >
             <div
                 class="flex gap-1 relative scale-75 translate-x-11 opacity-0 transition duration-500 group-hover:scale-100 group-hover:translate-x-0 group-hover:opacity-100">
-                <button @click="editTask()"
+                <button @click="taskToEmit()"
                         class="h-8 w-8 flex rounded transition duration-300 hover:bg-gray-300/20 focus:bg-gray-300/30 active:bg-gray-300/40">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                          stroke="currentColor" class="w-5 h-5 m-auto">
