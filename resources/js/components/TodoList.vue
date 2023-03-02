@@ -7,6 +7,7 @@ import TodoItem from "./TodoItem.vue";
 import ProjectFilter from "./ProjectFilter.vue";
 import {TaskItem} from "../types/taskItem";
 import TodoForm from "./TodoForm.vue";
+import {VueDraggableNext} from "vue-draggable-next";
 
 const store = useTaskListStore();
 const projectStore = useProjectListStore();
@@ -31,11 +32,22 @@ const formActivation = () => {
 }
 
 const todoRef = ref(null);
+
 async function scrollToForm() {
     const target = todoRef.value;
-    if (target) {
+    if (target && store.isActive) {
         await nextTick();
         target.$el.scrollIntoView({behavior: "smooth", block: "center", inline: "center"});
+    }
+}
+
+let isDragging = ref(false);
+
+const updateTaskOrder = (item) => {
+    if (isDragging.value) {
+        const movedTask =  item.moved.element;
+        const newPriority = item.moved.newIndex + 1;
+        store.updateTaskOrder(projectStore.selectedProject.id, movedTask, newPriority);
     }
 }
 
@@ -70,12 +82,24 @@ onMounted(() => {
             :task="taskEmitted"
             ref="todoRef"
         />
-        <todo-item
-            v-for="task in store.tasks"
-            :key="task.id"
-            :task="task"
-            @emitted-task="getEmittedTask"
-            @click="scrollToForm"
-        />
+        <vue-draggable-next
+            :list="store.tasks"
+            :disabled="projectStore.selectedProject.id === 0"
+            @start="isDragging = true"
+            @end="isDragging = false"
+            @change="updateTaskOrder"
+            class="space-y-3"
+        >
+            <transition-group type="transition">
+                <todo-item
+                    v-for="task in store.tasks"
+                    :key="task.priority"
+                    :task="task"
+                    @emitted-task="getEmittedTask"
+                    v-on:click="scrollToForm"
+                    :class="projectStore.selectedProject.id !== 0 ? 'cursor-move' : 'cursor-default'"
+                />
+            </transition-group>
+        </vue-draggable-next>
     </div>
 </template>

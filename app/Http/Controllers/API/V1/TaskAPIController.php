@@ -22,8 +22,8 @@ class TaskAPIController extends APIController
      */
     public function index(Project $project = null): mixed
     {
-        $tasks = $project?->tasks ?? Task::query()->orderBy('project_id');
-        $tasks = $tasks->orderBy('priority')->paginate(100);
+        $tasks = $project?->tasks() ?? Task::query()->orderBy('project_id', 'ASC');
+        $tasks = $tasks->paginate(100);
 
         return TaskCollection::make($tasks)->response()->getData();
     }
@@ -93,7 +93,7 @@ class TaskAPIController extends APIController
         $task->reorder($new_priority);
 
         return $this->responseSuccess(
-            data: TaskCollection::make($project->tasks()->orderBy('priority')->paginate(100)),
+            data: TaskCollection::make($project->tasks()->paginate(100)),
             message: 'Tasks reorder successfully!',
             code: Response::HTTP_ACCEPTED
         );

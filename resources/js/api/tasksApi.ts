@@ -6,19 +6,19 @@ export default {
     getTasks() {
         return axios.get(`${base_path}/tasks`);
     },
-    getProjectTasks(projectID: Number) {
-        return axios.get(`${base_path}/projects/${projectID}`)
+    getProjectTasks(projectId: Number) {
+        return axios.get(`${base_path}/projects/${projectId}`)
     },
-    createTask(projectID: Number, name: String) {
-        return axios.post(`${base_path}/projects/${projectID}/tasks`, {name});
+    createTask(projectId: Number, name: String) {
+        return axios.post(`${base_path}/projects/${projectId}/tasks`, {name});
     },
-    updateTask(projectID: Number, task: TaskItem, name: String) {
-        return axios.patch(`${base_path}/projects/${projectID}/tasks/${task.id}`, {name});
+    updateTask(projectId: Number, task: TaskItem, name: String) {
+        return axios.patch(`${base_path}/projects/${projectId}/tasks/${task.id}`, {name});
     },
-    deleteTask(projectID: Number, itemID: Number) {
-        return axios.delete(`${base_path}/projects/${projectID}/tasks/${itemID}`);
+    deleteTask(projectId: Number, $taskId: Number) {
+        return axios.delete(`${base_path}/projects/${projectId}/tasks/${$taskId}`);
     },
-    reorderTask(taskId) {
-        return axios.post(base_path + '/reorder');
+    reorderTask(projectId: Number, $taskId: Number, order: Number) {
+        return axios.post(`${base_path}/projects/${projectId}/tasks/${$taskId}/reorder`, {new_priority: order});
     }
 }

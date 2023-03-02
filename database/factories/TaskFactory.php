@@ -20,7 +20,7 @@ class TaskFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => fake()->sentence,
+            'name' => 'Task #'.$this->faker->unique()->numberBetween(1, 1000),
         ];
     }
 }

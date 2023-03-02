@@ -12,7 +12,7 @@ const defaultProject: ProjectItem = {
 export const useProjectListStore = defineStore("projectList", {
     state: () => ({
         projects: [] as ProjectItem[],
-        selectedProject: defaultProject,
+        selectedProject: defaultProject as ProjectItem,
     }),
     getters: {
         getProjects(state) {

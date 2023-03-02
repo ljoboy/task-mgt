@@ -27,19 +27,17 @@ class Task extends Model
 
     public function reorder(int $new_priority)
     {
-
         $priorities = collect()
             ->range($this->priority, $new_priority)
             ->sort()
             ->values()
             ->toArray();
 
-        $tasks = $this->whereProjectId($this->project_id)->whereIn('priority', $priorities);
-
+        $tasks = $this->whereProjectId($this->project_id)->whereIn('priority', $priorities)->orderBy('priority')->get();
         foreach ($tasks as $task) {
             if ($task->id === $this->id) {
                 $task->update(['priority' => $new_priority]);
-            } elseif ($new_priority > $this->priority) {
+            } elseif ($this->priority > $new_priority) {
                 $task->increment('priority');
             } else {
                 $task->decrement('priority');

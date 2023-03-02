@@ -20,7 +20,7 @@ class ProjectFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => fake()->company(),
+            'name' => 'Project #'.$this->faker->unique()->numberBetween(1, 1000),
         ];
     }
 }

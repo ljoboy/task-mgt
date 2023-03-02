@@ -69,10 +69,16 @@ export const useTaskListStore = defineStore("taskList", {
                 console.log(e.message)
             }
         },
-        reorder(idToFind: Number) {
-            const Task = this.taskList.find((obj) => obj.id === idToFind);
-            if (Task) {
-                Task.completed = !Task.completed;
+        async updateTaskOrder(projectID: Number, task: TaskItem, newPriority: Number) {
+            const response = await tasksApi.reorderTask(projectID, task.id, newPriority);
+            if (response.status === 202) {
+                const returnedTask = response.data.data;
+                this.tasks = this.tasks.map((task: TaskItem) => {
+                    if (task.id === returnedTask.id) {
+                        return task = returnedTask;
+                    }
+                    return task;
+                });
             }
         },
     },
