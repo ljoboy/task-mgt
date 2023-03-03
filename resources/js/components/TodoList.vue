@@ -97,7 +97,7 @@ onMounted(() => {
                     :task="task"
                     @emitted-task="getEmittedTask"
                     v-on:click="scrollToForm"
-                    :class="projectStore.selectedProject.id !== 0 ? 'cursor-move' : 'cursor-default'"
+                    :class="projectStore.selectedProject.id !== 0 ? 'cursor-grab' : 'cursor-no-drop'"
                 />
             </transition-group>
         </vue-draggable-next>

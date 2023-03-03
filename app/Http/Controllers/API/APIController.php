@@ -6,6 +6,7 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 
 abstract class APIController extends Controller
 {
@@ -20,8 +21,8 @@ abstract class APIController extends Controller
     private function response(
         mixed  $data,
         string $message,
-        int    $code = 422,
-        bool   $success = false
+        int    $code,
+        bool   $success
     ): JsonResponse
     {
         $response = [
@@ -40,12 +41,12 @@ abstract class APIController extends Controller
      * @return JsonResponse
      */
     protected function responseError(
-        string $message,
-        array  $data = [],
-        int    $code = 422
+        string $message = 'A problem occurred! Please try again!',
+        int    $code = Response::HTTP_UNPROCESSABLE_ENTITY,
+        array  $data = []
     ): JsonResponse
     {
-        return $this->response($data, $message, $code);
+        return $this->response(data: $data, message: $message, code: $code, success: false);
     }
 
     /**
@@ -57,9 +58,9 @@ abstract class APIController extends Controller
     protected function responseSuccess(
         $data,
         string $message = 'Data retrieved successfully',
-        int $code = 200
+        int $code = Response::HTTP_OK
     ): JsonResponse
     {
-        return $this->response($data, $message, $code, true);
+        return $this->response(data: $data, message: $message, code: $code, success: true);
     }
 }

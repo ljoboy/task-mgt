@@ -17,7 +17,7 @@ export const useTaskListStore = defineStore("taskList", {
         async fetchTasks() {
             try {
                 const tasks = await tasksApi.getTasks();
-                this.tasks = tasks.data.data;
+                this.tasks = tasks.data.data.data;
             } catch (e) {
                 console.log(e.message)
             }

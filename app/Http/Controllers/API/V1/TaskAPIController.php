@@ -20,12 +20,14 @@ class TaskAPIController extends APIController
     /**
      * Display a listing of the resource.
      */
-    public function index(Project $project = null): mixed
+    public function index(Project $project = null): JsonResponse
     {
         $tasks = $project?->tasks() ?? Task::query()->orderBy('project_id', 'ASC');
-        $tasks = $tasks->paginate(100);
 
-        return TaskCollection::make($tasks)->response()->getData();
+        return $this->responseSuccess(
+            data: TaskCollection::make($tasks->get()),
+            message: 'Tasks retrieved successfully',
+        );
     }
 
     /**
@@ -36,9 +38,9 @@ class TaskAPIController extends APIController
         $task = $project->tasks()->create($request->validated());
 
         return $this->responseSuccess(
-            new TaskResource($task),
-            'Task has been created',
-            Response::HTTP_CREATED
+            data: new TaskResource($task),
+            message: 'Task has been created',
+            code: Response::HTTP_CREATED
         );
     }
 
@@ -47,7 +49,12 @@ class TaskAPIController extends APIController
      */
     public function show(Project $project, Task $task): JsonResponse
     {
-        return $this->responseSuccess(new TaskResource($task));
+        $this->taskProjectValidation($project, $task);
+
+        return $this->responseSuccess(
+            data: new TaskResource($task),
+            message: 'Task retrieved successfully',
+        );
     }
 
     /**
@@ -55,8 +62,8 @@ class TaskAPIController extends APIController
      */
     public function update(UpdateTaskRequest $request, Project $project, Task $task): JsonResponse
     {
+        $this->taskProjectValidation($project, $task);
         $new_task = $task->update($request->validated());
-
         return $new_task
             ?
             $this->responseSuccess(
@@ -65,7 +72,7 @@ class TaskAPIController extends APIController
                 code: Response::HTTP_ACCEPTED
             )
             :
-            $this->responseError('A problem occurred! Please try again!');
+            $this->responseError();
     }
 
     /**
@@ -73,34 +80,36 @@ class TaskAPIController extends APIController
      */
     public function destroy(Project $project, Task $task): JsonResponse
     {
+        $this->taskProjectValidation($project, $task);
         $deleted = $task->delete();
 
         return $deleted
             ?
             $this->responseSuccess(
-                null,
-                'Task deleted successfully!',
-                Response::HTTP_NO_CONTENT
+                data: null,
+                message: 'Task deleted successfully!',
+                code: Response::HTTP_NO_CONTENT
             )
             :
-            $this->responseError('A problem occurred! Please try again!');
+            $this->responseError();
     }
 
     public function reorder(ReorderRequest $request, Project $project, Task $task)
     {
+        $this->taskProjectValidation($project, $task);
         $new_priority = $request->get('new_priority');
 
         $task->reorder($new_priority);
 
         return $this->responseSuccess(
-            data: TaskCollection::make($project->tasks()->paginate(100)),
+            data: new TaskCollection($project->tasks()),
             message: 'Tasks reorder successfully!',
             code: Response::HTTP_ACCEPTED
         );
     }
 
-    private function taskProjectValidation(Project $project, Task $task)
+    private function taskProjectValidation(Project $project, Task $task): void
     {
-        $task->whereProjectId($project->id)->exists();
+            $task->whereProjectId($project->id)->exists() ?? $this->responseError();
     }
 }

@@ -18,11 +18,14 @@ class ProjectAPIController extends APIController
     /**
      * Display a listing of the resource.
      */
-    public function index(): mixed
+    public function index(): JsonResponse
     {
-        $projects = Project::query()->paginate(25);
+        $projects = Project::all();
 
-        return ProjectCollection::make($projects)->response()->getData();
+        return $this->responseSuccess(
+            data: ProjectCollection::make($projects),
+            message: 'Projects retrieved successfully',
+        );
     }
 
     /**
@@ -33,9 +36,9 @@ class ProjectAPIController extends APIController
         $project = Project::create($request->validated());
 
         return $this->responseSuccess(
-            new ProjectResource($project),
-            'Project has been created',
-            Response::HTTP_CREATED
+            data: new ProjectResource($project),
+            message: 'Project has been created',
+            code: Response::HTTP_CREATED
         );
     }
 
@@ -44,7 +47,10 @@ class ProjectAPIController extends APIController
      */
     public function show(Project $project): JsonResponse
     {
-        return $this->responseSuccess(new ProjectResource($project->load(['tasks'])));
+        return $this->responseSuccess(
+            data: new ProjectResource($project->load(['tasks'])),
+            message: 'Project retrieved successfully',
+        );
     }
 
     /**
@@ -58,11 +64,11 @@ class ProjectAPIController extends APIController
             ?
             $this->responseSuccess(
                 new ProjectResource($project),
-                'Project updated successfully!',
-                Response::HTTP_ACCEPTED
+                message: 'Project updated successfully!',
+                code: Response::HTTP_ACCEPTED
             )
             :
-            $this->responseError('A problem occurred! Please try again!');
+            $this->responseError();
     }
 
     /**
@@ -75,11 +81,11 @@ class ProjectAPIController extends APIController
         return $deleted
             ?
             $this->responseSuccess(
-                null,
-                'Project deleted successfully!',
-                Response::HTTP_NO_CONTENT
+                data: null,
+                message: 'Project deleted successfully!',
+                code: Response::HTTP_NO_CONTENT
             )
             :
-            $this->responseError('A problem occurred! Please try again!');
+            $this->responseError();
     }
 }

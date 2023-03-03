@@ -14,6 +14,6 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-         Project::factory(5)->has(Task::factory(10))->create();
+         Project::factory(6)->has(Task::factory(10))->create();
     }
 }
