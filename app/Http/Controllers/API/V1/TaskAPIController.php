@@ -102,7 +102,7 @@ class TaskAPIController extends APIController
         $task->reorder($new_priority);
 
         return $this->responseSuccess(
-            data: new TaskCollection($project->tasks()),
+            data: new TaskCollection($project->tasks),
             message: 'Tasks reorder successfully!',
             code: Response::HTTP_ACCEPTED
         );

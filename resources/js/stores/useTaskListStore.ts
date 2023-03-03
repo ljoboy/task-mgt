@@ -1,6 +1,9 @@
 import {defineStore} from "pinia";
 import tasksApi from "../api/tasksApi";
 import {TaskItem} from "../types/taskItem";
+import {toast} from "vue3-toastify";
+import {AxiosResponse} from "axios";
+import {ref} from "vue";
 
 export const useTaskListStore = defineStore("taskList", {
     state: () => ({
@@ -15,71 +18,67 @@ export const useTaskListStore = defineStore("taskList", {
     },
     actions: {
         async fetchTasks() {
-            try {
-                const tasks = await tasksApi.getTasks();
-                this.tasks = tasks.data.data.data;
-            } catch (e) {
-                console.log(e.message)
-            }
+            const response = await tasksApi.getTasks();
+            this.tasks = response.data.data.data;
         },
         async fetchProjectTasks(projectID: Number) {
-            try {
-                const response = await tasksApi.getProjectTasks(projectID);
-                this.tasks = response.data.data.tasks;
-            } catch (e) {
-                console.log(e.message)
-            }
+            await this.alert(tasksApi.getProjectTasks(projectID), 'fetch');
         },
         async addTask(projectID: Number, task: String) {
-            try {
-                const response = await tasksApi.createTask(projectID, task);
-                if (response.status === 201) {
-                    this.tasks.push(response.data.data)
-                }
-            } catch (e) {
-                console.log(e.message)
-            }
+            await this.alert(tasksApi.createTask(projectID, task), 'add');
         },
         async deleteTask(projectID: Number, itemID: Number) {
-            try {
-                const response = await tasksApi.deleteTask(projectID, itemID);
-                if (response.status === 204) {
-                    this.tasks = this.tasks.filter((object: TaskItem) => {
-                        return object.id !== itemID;
-                    });
-                    console.log("deleted")
-                }
-            } catch (e) {
-                console.log(e.message)
-            }
+            await this.alert(tasksApi.deleteTask(projectID, itemID), 'delete', [itemID]);
         },
         async editTask(projectID: Number, task: TaskItem, name: String) {
-            try {
-                const response = await tasksApi.updateTask(projectID, task, name);
-                if (response.status === 202) {
-                    const returnedTask = response.data.data;
-                    this.tasks = this.tasks.map((task: TaskItem) => {
-                        if (task.id === returnedTask.id) {
-                            return task = returnedTask;
-                        }
-                        return task;
-                    });
-                }
-            } catch (e) {
-                console.log(e.message)
-            }
+            await this.alert(tasksApi.updateTask(projectID, task, name), 'edit');
         },
         async updateTaskOrder(projectID: Number, task: TaskItem, newPriority: Number) {
-            const response = await tasksApi.reorderTask(projectID, task.id, newPriority);
-            if (response.status === 202) {
-                const returnedTask = response.data.data;
-                this.tasks = this.tasks.map((task: TaskItem) => {
-                    if (task.id === returnedTask.id) {
-                        return task = returnedTask;
-                    }
-                    return task;
-                });
-            }
+            await this.alert(tasksApi.reorderTask(projectID, task.id, newPriority), 'reorder');
         },
+        async alert(promise, method: string = null, options: any[] = []) {
+            await toast.promise(
+                promise,
+                {
+                    pending: 'Loading... 🍕',
+                    success: 'Everything went okay... 👌',
+                    error: 'A problem occurred... 😞',
+                },
+                {
+                    position: toast.POSITION.TOP_RIGHT,
+                    closeButton: true,
+                    pauseOnHover: false,
+                    hideProgressBar: true,
+                },
+            ).then((result: AxiosResponse) => {
+                switch (method) {
+                    case 'delete':
+                        this.tasks = this.tasks.filter((object: TaskItem) => {
+                            return object.id !== options[0];
+                        });
+                        break;
+                    case 'fetch':
+                        this.tasks = result?.data.data.tasks;
+                        break;
+                    case 'add':
+                        this.tasks.push(result?.data.data);
+                        break;
+                    case 'edit':
+                        this.tasks = this.tasks.map((task: TaskItem) => {
+                            return task.id === result?.data.data.id ? result?.data.data : task;
+                        });
+                        break;
+                    case 'reorder':
+                        const returnedTask = result?.data.data;
+                        this.tasks = this.tasks.map((task: TaskItem) => {
+                            return task.id === returnedTask.id ? returnedTask : task;
+                        });
+                        break;
+                }
+
+                setTimeout(() => { toast.clearAll(); }, 2000);
+
+            });
+        }
     },
 });
