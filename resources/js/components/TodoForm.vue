@@ -2,7 +2,7 @@
 
 import {useTaskListStore} from "../stores/useTaskListStore";
 import {useProjectListStore} from "../stores/useProjectListStore";
-import {PropType, ref, watch} from "vue";
+import {computed, PropType, ref, watch} from "vue";
 import {TaskItem} from "../types/taskItem";
 
 const store = useTaskListStore();
@@ -42,16 +42,30 @@ const submit = () => {
     name.value = "";
     store.isActive = !store.isActive;
 }
+
+const inputRef = ref(null);
+
+const isFormActive = computed(() => {
+    if (inputRef.value) {
+        inputRef.value.focus();
+    }
+    return store.isActive && (projectStore.selectedProject.id !== 0);
+});
+
 </script>
 
 <template>
     <form
-        v-if="store.isActive && (projectStore.selectedProject.id !== 0)"
+        v-if="isFormActive"
         class="p-3 bg-white rounded-xl"
         @submit.prevent="submit()"
     >
-        <input class="w-full rounded-md p-4 bg-white border border-gray-300/50" placeholder="What's your new task ?"
-               type="text" v-model="name"/>
+        <input class="w-full rounded-md p-4 bg-white border border-gray-300/50"
+               placeholder="What's your new task ?"
+               type="text" v-model="name"
+               :autofocus="store.isActive"
+               ref="inputRef"
+        />
         <div class="mt-3 grid grid-cols-2 gap-3">
             <button class="py-1.5 px-3 text-sm rounded bg-gray-600 border border-transparent text-white" type="submit">
                 {{ props.task ? 'Edit' : 'Add' }}

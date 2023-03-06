@@ -1,27 +1,28 @@
 1. Backend
     1. Project
-       - [ ] Create
-       - [ ] Read
-       - [ ] Update
-       - [ ] Delete
+       - [x] Create
+       - [x] Read
+       - [x] Update
+       - [x] Delete
+       - [x] Change priority
 
    2. Task
-      - [ ] Create
-      - [ ] Read
-      - [ ] Update
-      - [ ] Delete
-      - [ ] Change priority
+      - [x] Create
+      - [x] Read
+      - [x] Update
+      - [x] Delete
+      - [x] Change priority
       
 2. Frontend
     1. Project
        - [ ] Create
-       - [ ] Read
+       - [x] Read
        - [ ] Update
        - [ ] Delete
 
    2. Task
-      - [ ] Create
-      - [ ] Read
-      - [ ] Update
-      - [ ] Delete
-      - [ ] Change priority
+      - [x] Create
+      - [x] Read
+      - [x] Update
+      - [x] Delete
+      - [x] Change priority
