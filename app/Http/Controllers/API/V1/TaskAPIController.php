@@ -19,6 +19,8 @@ class TaskAPIController extends APIController
 {
     /**
      * Display a listing of the resource.
+     * @param Project|null $project
+     * @return JsonResponse
      */
     public function index(Project $project = null): JsonResponse
     {
@@ -32,6 +34,9 @@ class TaskAPIController extends APIController
 
     /**
      * Store a newly created resource in storage.
+     * @param StoreTaskRequest $request
+     * @param Project $project
+     * @return JsonResponse
      */
     public function store(StoreTaskRequest $request, Project $project): JsonResponse
     {
@@ -46,6 +51,9 @@ class TaskAPIController extends APIController
 
     /**
      * Display the specified resource.
+     * @param Project $project
+     * @param Task $task
+     * @return JsonResponse
      */
     public function show(Project $project, Task $task): JsonResponse
     {
@@ -59,6 +67,10 @@ class TaskAPIController extends APIController
 
     /**
      * Update the specified resource in storage.
+     * @param UpdateTaskRequest $request
+     * @param Project $project
+     * @param Task $task
+     * @return JsonResponse
      */
     public function update(UpdateTaskRequest $request, Project $project, Task $task): JsonResponse
     {
@@ -77,6 +89,9 @@ class TaskAPIController extends APIController
 
     /**
      * Remove the specified resource from storage.
+     * @param Project $project
+     * @param Task $task
+     * @return JsonResponse
      */
     public function destroy(Project $project, Task $task): JsonResponse
     {
@@ -94,6 +109,13 @@ class TaskAPIController extends APIController
             $this->responseError();
     }
 
+    /**
+     * Reorder a task
+     * @param ReorderRequest $request
+     * @param Project $project
+     * @param Task $task
+     * @return JsonResponse
+     */
     public function reorder(ReorderRequest $request, Project $project, Task $task)
     {
         $this->taskProjectValidation($project, $task);
@@ -108,8 +130,15 @@ class TaskAPIController extends APIController
         );
     }
 
+    /**
+     * @param Project $project
+     * @param Task $task
+     * @return void
+     */
     private function taskProjectValidation(Project $project, Task $task): void
     {
-            $task->whereProjectId($project->id)->exists() ?? $this->responseError();
+        if ($task->project_id !== $project->id) {
+            abort(Response::HTTP_UNPROCESSABLE_ENTITY, 'Task does not belong to this project');
+        }
     }
 }
