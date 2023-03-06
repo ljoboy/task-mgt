@@ -34,7 +34,7 @@ it('can fetch a task', function () {
     $response = $this->getJson(route('api.v1.projects.tasks.show', [$task->project, $task]));
     $data = [
         'success' => true,
-        'message' => 'Data retrieved successfully',
+        'message' => 'Task retrieved successfully',
         'data' => (new TaskResource($task))->jsonSerialize(),
     ];
 
@@ -142,12 +142,12 @@ it('cannot reorder task with wrong project id for task', function () {
     $request = [
         'new_priority' => 5,
     ];
-    $response = $this->postJson(route('api.v1.projects.tasks.reorder', [$project, $tasks->random()]), $request);
+    $response = $this->postJson(route('api.v1.projects.tasks.reorder', [$project, $tasks->first()]), $request);
     $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
 });
 
 it('cannot reorder task without new priority value', function () {
     $tasks = Task::factory(10)->for(Project::factory())->create();
-    $response = $this->postJson(route('api.v1.projects.tasks.reorder', [$tasks->first->project]), []);
+    $response = $this->postJson(route('api.v1.projects.tasks.reorder', [$tasks->first->project->id, $tasks->first->id]), []);
     $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
 });

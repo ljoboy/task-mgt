@@ -25,7 +25,7 @@ it('can fetch a project', function () {
     $response = $this->getJson(route('api.v1.projects.show', $project->id));
     $data = [
         'success' => true,
-        'message' => 'Data retrieved successfully',
+        'message' => 'Project retrieved successfully',
         'data' => (new ProjectResource($project))->jsonSerialize(),
     ];
 
