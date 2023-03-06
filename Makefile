@@ -1,14 +1,15 @@
-.PHONY: install npm
+.PHONY: install seed test build serve
+
+all: install seed test build serve
 
 install:
 	composer install
 	php artisan key:generate
 	php artisan storage:link
-	php artisan migrate:fresh --seed
 
-npm:
+build:
 	npm i
-	npm run dev
+	npm run build
 
 seed:
 	php artisan migrate:fresh --seed
