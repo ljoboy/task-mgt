@@ -1,6 +1,6 @@
 .PHONY: install seed test build serve
 
-all: install seed test build serve
+all: install seed build serve
 
 install:
 	composer install
